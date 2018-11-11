@@ -4,7 +4,7 @@
   "description": "Helps you track your diet and determines if you should eat a food or not, based on your restrictions",
   "main": "server.js",
   "scripts": {
-    "client-install": "npm install -- prefix client",
+    "client-install": "npm install --prefix client",
     "start": "node server.js",
     "server": "nodemon server.js",
     "client": "npm start --prefix client",
@@ -24,6 +24,7 @@
     "passport-jwt": "^4.0.0",
     "python-shell": "^1.0.6",
     "request": "^2.88.0",
+    "sleep": "^5.2.3",
     "validator": "^10.8.0"
   },
   "devDependencies": {

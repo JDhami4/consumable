@@ -2,9 +2,10 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 const passport = require("passport");
+const sleep = require("sleep");
 function stopIt() {
   var start = new Date().getTime();
-  for (var i = 0; i < 200000; i++) {
+  for (var i = 0; i < 2000000; i++) {
     console.log(i);
   }
 }
@@ -21,23 +22,22 @@ const subscriptionKey = "b7c8e9bc167b4350ae15e882e773098d";
 const uriBase =
   "https://westcentralus.api.cognitive.microsoft.com/vision/v2.0/recognizeText?mode=Printed";
 
-const imageUrl =
-  "https://res.cloudinary.com/dq5kixztw/image/upload/v1541895070/wphna-world-public-health-nutrition-association-with-nutrition-label-with-ingredients.jpg";
+const imageUrl = "";
 
 // Request parameters.
 const params = {
   // 'mode': 'printed',
 };
 
-const options = {
-  uri: uriBase,
-  qs: params,
-  body: '{"url": ' + '"' + imageUrl + '"}',
-  headers: {
-    "Content-Type": "application/json",
-    "Ocp-Apim-Subscription-Key": subscriptionKey
-  }
-};
+// const options = {
+//   uri: uriBase,
+//   qs: params,
+//   body: '{"url": ' + '"' + imageUrl + '"}',
+//   headers: {
+//     "Content-Type": "application/json",
+//     "Ocp-Apim-Subscription-Key": subscriptionKey
+//   }
+// };
 
 // Load Profile Model
 const Profile = require("../../models/Profile");
@@ -45,37 +45,48 @@ const Profile = require("../../models/Profile");
 //Load User Profile
 const User = require("../../models/User");
 
-// @route   GET api/profile/test
-// @desc    Tests profile route
-// @access  Public
+// @route   GET api/profile/test
+// @desc    Tests profile route
+// @access  Public
 router.get("/test", (req, res) => res.json({ msg: "Profile Works" }));
 
-// @route   GET api/profile/test
-// @desc    Tests Microsoft's API
-// @access  Public
-router.get("/info", (req, res) => {
+// @route   GET api/profile/test
+// @desc    Tests Microsoft's API
+// @access  Public
+router.post("/info", (req, res) => {
+  const options = {
+    uri: uriBase,
+    qs: params,
+    body: '{"url": ' + '"' + req.body.url + '"}',
+    headers: {
+      "Content-Type": "application/json",
+      "Ocp-Apim-Subscription-Key": subscriptionKey
+    }
+  };
   request.post(options, (error, response, body) => {
     if (error) {
       console.log("Error: ", error);
       return;
     }
-    console.log("JSON Response\n");
-
-    stopIt();
-    const uri = response.headers["operation-location"];
-    const options = {
-      uri: uri,
-      headers: {
-        "Content-Type": "application/json",
-        "Ocp-Apim-Subscription-Key": subscriptionKey
-      }
-    };
-    request.get(options, (error, response, body) => {
-      let jsonResponse = JSON.stringify(JSON.parse(body), null, "  ");
-      //   console.log(jsonResponse);
-      let json = JSON.parse(body);
-      console.log(json["recognitionResult"]["lines"][0].text);
-    });
+    res.json(response.headers["operation-location"]);
+  });
+});
+router.post("/info/header", (req, res) => {
+  console.log(req.body.header);
+  const options = {
+    uri: req.body.header,
+    headers: {
+      "Content-Type": "application/json",
+      "Ocp-Apim-Subscription-Key": subscriptionKey
+    }
+  };
+  sleep.sleep(8);
+  request.get(options, (error, response, body) => {
+    let jsonResponse = JSON.stringify(JSON.parse(body), null, "  ");
+    let json = JSON.parse(body);
+    // console.log(json);
+    // console.log(json["recognitionResult"]["lines"]);
+    res.json(json["recognitionResult"]["lines"]);
   });
 });
 
