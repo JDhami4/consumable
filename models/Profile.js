@@ -8,17 +8,14 @@ const ProfileSchema = new Schema({
     ref: "users"
   },
 
-  remainCal: {
-    type: Number
+  caloricGoal: {
+    type: Number,
+    required: true
   },
 
   restrictions: {
     type: [String],
     required: true
-  },
-
-  foodHistory: {
-    type: [String]
   },
 
   macros: [
@@ -42,7 +39,10 @@ const ProfileSchema = new Schema({
         type: Number
       }
     }
-  ]
+  ],
+  foodHistory: {
+    type: [String]
+  }
 });
 
 module.exports = Profile = mongoose.model("profile", ProfileSchema);
