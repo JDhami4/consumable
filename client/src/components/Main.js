@@ -23,7 +23,7 @@ class Main extends Component {
       restrictions: this.state.restrictions
     };
     axios
-      .post("api/profile/info", info)
+      .post("http://localhost:5000/api/profile/info", info)
       .then(res => console.log(res.data))
       .catch(err => this.setState({ errors: err.response.data }));
   };
